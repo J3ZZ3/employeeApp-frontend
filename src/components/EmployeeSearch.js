@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import '../styles/EmployeeSearch.css'; // Adjust path as needed
+import '../styles/EmployeeSearch.css';
 
 const EmployeeSearch = ({ searchEmployees }) => {
   const [query, setQuery] = useState('');
