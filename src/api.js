@@ -4,9 +4,13 @@ const api = axios.create({
   baseURL: 'http://localhost:5000/api/employees', 
 });
 
+const API_BASE_URL = 'http://localhost:5000/api/employees';
+
+
 export const addEmployee = async (data) => {
   try {
-    return await api.post('/', data);
+    const response = await api.post('/', data);
+    return response.data;
   } catch (error) {
     console.error('Error in addEmployee API call:', error.response || error.message);
     throw error;
@@ -14,18 +18,20 @@ export const addEmployee = async (data) => {
 };
 
 export const updateEmployee = async (id, data) => {
-    try {
-      return await api.put(`/${id}`, data); 
-    } catch (error) {
-      console.error('Error in updateEmployee API call:', error.response || error.message);
-      throw error;
-    }
-  };
+  try {
+    const response = await api.put(`/${id}`, data);
+    return response.data;
+  } catch (error) {
+    console.error('Error in updateEmployee API call:', error.response || error.message);
+    throw error;
+  }
+};
   
 
 export const deleteEmployee = async (id) => {
   try {
-    return await api.delete(`/${id}`);
+    const response = await api.delete(`/${id}`);
+    return response.data;
   } catch (error) {
     console.error('Error in deleteEmployee API call:', error.response || error.message);
     throw error;
@@ -35,9 +41,9 @@ export const deleteEmployee = async (id) => {
 export const getEmployees = async () => {
   try {
     const response = await api.get('/');
-    return response;
+    return { data: response.data };
   } catch (error) {
-    console.error('Error in getEmployees API call:', error.response || error.message);
+    console.error('Error in getEmployees API call:', error);
     throw error;
   }
 };
