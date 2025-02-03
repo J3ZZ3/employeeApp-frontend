@@ -1,7 +1,5 @@
 # Employee Management System Documentation
 
-BACKEND:https://github.com/J3ZZ3/employeeApp-backend
-
 ## Table of Contents
 1. [Overview](#overview)
 2. [Technology Stack](#technology-stack)
