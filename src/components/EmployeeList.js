@@ -4,6 +4,7 @@ import { getEmployees, updateEmployee, deleteEmployee } from '../api';
 import Swal from 'sweetalert2';
 import '../styles/EmployeeList.css';
 import EmployeeSearch from './EmployeeSearch';
+import Loader from './Loader';
 
 const EmployeeList = () => {
   const navigate = useNavigate();
@@ -11,6 +12,7 @@ const EmployeeList = () => {
   const [editingEmployee, setEditingEmployee] = useState(null);
   const [error, setError] = useState('');
   const [filteredEmployees, setFilteredEmployees] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     fetchEmployees();
@@ -18,6 +20,7 @@ const EmployeeList = () => {
 
   const fetchEmployees = async () => {
     try {
+      setIsLoading(true);
       const response = await getEmployees();
       const employeeData = Array.isArray(response) ? response : response.data || [];
       setEmployees(employeeData);
@@ -25,6 +28,8 @@ const EmployeeList = () => {
     } catch (error) {
       console.error('Error fetching employees:', error);
       setError('Failed to load employees. Please check your network connection or backend API.');
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -101,39 +106,49 @@ const EmployeeList = () => {
           );
           setFilteredEmployees(filtered);
         }} />
-        <button className="add-button" onClick={handleAddEmployee}>Add New Employee</button>
+        <button className="button-17 primary" onClick={handleAddEmployee}>
+          Add New Employee
+        </button>
       </div>
       
       {error && <p className="error-message">{error}</p>}
       
-      <div className="employees-grid">
-        {filteredEmployees.map(employee => (
-          <div key={employee.id} className="employee-card">
-            <div className="employee-image">
-              {employee.photo ? (
-                <img 
-                  src={`data:image/jpeg;base64,${employee.photo}`} 
-                  alt={`${employee.name} ${employee.surname}`}
-                />
-              ) : (
-                <div className="placeholder-image">
-                  {employee.name?.[0]}{employee.surname?.[0]}
+      {isLoading ? (
+        <Loader />
+      ) : (
+        <div className="employees-grid">
+          {filteredEmployees.map(employee => (
+            <div key={employee.id} className="employee-card">
+              <div className="employee-image">
+                {employee.photo ? (
+                  <img 
+                    src={`data:image/jpeg;base64,${employee.photo}`} 
+                    alt={`${employee.name} ${employee.surname}`}
+                  />
+                ) : (
+                  <div className="placeholder-image">
+                    {employee.name?.[0]}{employee.surname?.[0]}
+                  </div>
+                )}
+              </div>
+              <div className="employee-details">
+                <h3>{employee.name} {employee.surname}</h3>
+                <p><strong>Age:</strong> {employee.age} years</p>
+                <p><strong>ID:</strong> {employee.idNumber}</p>
+                <p><strong>Role:</strong> {employee.role}</p>
+                <div className="employee-actions">
+                  <button className="button-17" onClick={() => handleEdit(employee)}>
+                    Edit
+                  </button>
+                  <button className="button-17 danger" onClick={() => handleDelete(employee.id)}>
+                    Delete
+                  </button>
                 </div>
-              )}
-            </div>
-            <div className="employee-details">
-              <h3>{employee.name} {employee.surname}</h3>
-              <p><strong>Age:</strong> {employee.age} years</p>
-              <p><strong>ID:</strong> {employee.idNumber}</p>
-              <p><strong>Role:</strong> {employee.role}</p>
-              <div className="employee-actions">
-                <button className="edit-button" onClick={() => handleEdit(employee)}>Edit</button>
-                <button className="delete-button" onClick={() => handleDelete(employee.id)}>Delete</button>
               </div>
             </div>
-          </div>
-        ))}
-      </div>
+          ))}
+        </div>
+      )}
 
       {editingEmployee && (
         <div className="modal">
@@ -168,8 +183,14 @@ const EmployeeList = () => {
               placeholder="Role"
             />
             <div className="form-actions">
-              <button type="submit">Update</button>
-              <button type="button" onClick={() => setEditingEmployee(null)}>Cancel</button>
+              <button type="submit" className="button-17 success">Update</button>
+              <button 
+                type="button" 
+                className="button-17 warning" 
+                onClick={() => setEditingEmployee(null)}
+              >
+                Cancel
+              </button>
             </div>
           </form>
         </div>

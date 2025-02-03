@@ -79,7 +79,7 @@ const EmployeeSearch = ({ searchEmployees }) => {
           className="search-text"
         />
         <button 
-          className={`age-filter-button ${ageRange.min || ageRange.max ? 'active' : ''}`}
+          className={`button-17 ${ageRange.min || ageRange.max ? 'primary' : ''}`}
           onClick={showAgeFilterModal}
         >
           {ageRange.min || ageRange.max ? 

@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { addEmployee } from '../api';
 import Swal from 'sweetalert2';
 import '../styles/EmployeeForm.css';  
+import Loader from './Loader';
 
 const EmployeeForm = () => {
   const navigate = useNavigate();
@@ -15,6 +16,7 @@ const EmployeeForm = () => {
     photo: '',
   });
   const [error, setError] = useState('');
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const compressImage = (file) => {
     return new Promise((resolve) => {
@@ -70,6 +72,7 @@ const EmployeeForm = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setIsSubmitting(true);
     try {
       await addEmployee(formData);
       setFormData({ name: '', surname: '', age: '', idNumber: '', role: '', photo: '' });
@@ -84,8 +87,8 @@ const EmployeeForm = () => {
         navigate('/'); // Navigate back to list after successful addition
       });
     } catch (error) {
-      setError('Failed to add employee. Please try again.');
       console.error('Add Employee Error:', error);
+      setError('Failed to add employee. Please try again.');
       
       Swal.fire({
         title: 'Error!',
@@ -93,62 +96,74 @@ const EmployeeForm = () => {
         icon: 'error',
         confirmButtonText: 'OK',
       });
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
   return (
     <div className="form-page">
-      <form onSubmit={handleSubmit} className="form-container">
-        <h3>Add New Employee</h3>
-        <input
-          className="input"
-          type="text"
-          placeholder="Name"
-          value={formData.name}
-          onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-        />
-        <input
-          className="input"
-          type="text"
-          placeholder="Surname"
-          value={formData.surname}
-          onChange={(e) => setFormData({ ...formData, surname: e.target.value })}
-        />
-        <input
-          className="input"
-          type="number"
-          placeholder="Age"
-          value={formData.age}
-          onChange={(e) => setFormData({ ...formData, age: e.target.value })}
-        />
-        <input
-          className="input"
-          type="text"
-          placeholder="ID Number"
-          value={formData.idNumber}
-          onChange={(e) => setFormData({ ...formData, idNumber: e.target.value })}
-        />
-        <input
-          className="input"
-          type="text"
-          placeholder="Role"
-          value={formData.role}
-          onChange={(e) => setFormData({ ...formData, role: e.target.value })}
-        />
-        <input
-          className="input"
-          type="file"
-          accept="image/*"
-          onChange={handlePhotoChange}
-        />
-        <div className="form-actions">
-          <button type="submit" className="submit-button">Add Employee</button>
-          <button type="button" className="cancel-button" onClick={() => navigate('/')}>
-            Cancel
-          </button>
-        </div>
-        {error && <p className="error-message">{error}</p>}
-      </form>
+      {isSubmitting ? (
+        <Loader />
+      ) : (
+        <form onSubmit={handleSubmit} className="form-container">
+          <h3>Add New Employee</h3>
+          <input
+            className="input"
+            type="text"
+            placeholder="Name"
+            value={formData.name}
+            onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+          />
+          <input
+            className="input"
+            type="text"
+            placeholder="Surname"
+            value={formData.surname}
+            onChange={(e) => setFormData({ ...formData, surname: e.target.value })}
+          />
+          <input
+            className="input"
+            type="number"
+            placeholder="Age"
+            value={formData.age}
+            onChange={(e) => setFormData({ ...formData, age: e.target.value })}
+          />
+          <input
+            className="input"
+            type="text"
+            placeholder="ID Number"
+            value={formData.idNumber}
+            onChange={(e) => setFormData({ ...formData, idNumber: e.target.value })}
+          />
+          <input
+            className="input"
+            type="text"
+            placeholder="Role"
+            value={formData.role}
+            onChange={(e) => setFormData({ ...formData, role: e.target.value })}
+          />
+          <input
+            className="input"
+            type="file"
+            accept="image/*"
+            onChange={handlePhotoChange}
+          />
+          <div className="form-actions">
+            <button type="submit" className="button-17 success">
+              Add Employee
+            </button>
+            <button 
+              type="button" 
+              className="button-17 warning" 
+              onClick={() => navigate('/')}
+            >
+              Cancel
+            </button>
+          </div>
+          {error && <p className="error-message">{error}</p>}
+        </form>
+      )}
     </div>
   );
 };
